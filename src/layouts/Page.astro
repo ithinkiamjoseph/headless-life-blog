@@ -1,0 +1,22 @@
+---
+import Base from './Base.astro';
+
+// Used as the `layout` for Markdown pages (now, about).
+interface Props {
+  frontmatter: { title: string; description?: string; updated?: string };
+}
+
+const { title, description, updated } = Astro.props.frontmatter;
+---
+
+<Base title={title} description={description}>
+  <header class="mb-10">
+    <p class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted">
+      /{title.toLowerCase()}{updated && <span> · updated <span class="tabular-nums">{updated}</span></span>}
+    </p>
+    <h1 class="mt-3 text-[28px] font-semibold leading-tight tracking-[-0.02em]">{title}</h1>
+  </header>
+  <article class="prose prose-matte max-w-none text-[16px] leading-[1.75]">
+    <slot />
+  </article>
+</Base>

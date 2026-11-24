@@ -1,0 +1,61 @@
+---
+import Base from '../layouts/Base.astro';
+import { getPosts, formatDate } from '../lib/posts';
+
+const [latest, ...rest] = await getPosts();
+---
+
+<Base>
+  <p class="max-w-[52ch] text-[15px] leading-relaxed text-muted">
+    Working notes on stateless computing, portable data,<br class="hidden sm:inline" />
+    and building quiet software in the open.
+  </p>
+
+  {
+    latest && (
+      <section class="mt-14 border border-line p-6 sm:p-7" aria-label="Latest post">
+        <p class="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.08em] text-muted">
+          <span class="inline-block size-[6px] rounded-full bg-accent" aria-hidden="true" />
+          <span>
+            Latest · <time class="tabular-nums" datetime={latest.data.date.toISOString()}>{formatDate(latest.data.date)}</time>
+          </span>
+          {latest.data.draft && <span class="text-accent">· draft</span>}
+        </p>
+        <h2 class="mt-4 text-[22px] font-semibold leading-snug tracking-[-0.015em]">
+          <a href={`/posts/${latest.id}/`} class="transition-colors hover:text-accent">
+            {latest.data.title}
+          </a>
+        </h2>
+        <p class="mt-2 line-clamp-2 text-[15px] leading-relaxed text-muted">{latest.data.description}</p>
+      </section>
+    )
+  }
+
+  {
+    rest.length > 0 && (
+      <section class="mt-16" aria-label="Archive">
+        <h2 class="mb-3 font-mono text-[11px] uppercase tracking-[0.08em] text-muted">Index</h2>
+        <ul class="border-t border-line">
+          {rest.map((post) => (
+            <li class="border-b border-line">
+              <a href={`/posts/${post.id}/`} class="group flex items-baseline gap-6 py-3">
+                <time
+                  class="w-[10ch] shrink-0 font-mono text-[13px] tabular-nums text-muted"
+                  datetime={post.data.date.toISOString()}
+                >
+                  {formatDate(post.data.date)}
+                </time>
+                <span class="text-[15px] transition-colors group-hover:text-accent">
+                  {post.data.title}
+                  {post.data.draft && <span class="ml-2 font-mono text-[11px] uppercase text-accent">draft</span>}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {!latest && <p class="mt-14 font-mono text-[13px] text-muted">No posts yet.</p>}
+</Base>
